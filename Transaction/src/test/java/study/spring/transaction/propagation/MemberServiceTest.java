@@ -119,4 +119,20 @@ class MemberServiceTest {
         assertTrue(memberRepository.find(username).isEmpty());
         assertTrue(logRepository.find(username).isEmpty());
     }
+
+    /**
+     * memberService     @Transactional: ON Log Repository의 Exception 전파됨
+     * memberRepository  @Transactional: ON
+     * logRepository     @Transactional: ON(REQUIRES_NEW) Exception Suspending current transaction, creating new transaction
+     */
+    @Test
+    void recoverException__success() {
+        String username = "로그예외_recoverException__success";
+
+        memberService.joinV2(username);
+
+        // member 저장, log 롤백
+        assertTrue(memberRepository.find(username).isPresent());
+        assertTrue(logRepository.find(username).isEmpty());
+    }
 }
